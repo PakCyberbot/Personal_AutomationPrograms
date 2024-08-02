@@ -22,8 +22,10 @@ def progress_logs(data_dict, user_name):
     last_2_days_activity: list[yesterday, current]
     }
     """
+    file_not_exists = True
     names_new_rooms_completed = set()
     if os.path.exists(f"profiles/{user_name}.pkl"):
+        file_not_exists = False
         # Open the file in binary read mode
         with open(f'profiles/{user_name}.pkl', 'rb') as file:
             # Deserialize and read the list from the file
@@ -47,8 +49,11 @@ def progress_logs(data_dict, user_name):
     with open(f'profiles/{user_name}.pkl', 'wb') as file:
         # Step 4: Serialize and write the list to the file
         pickle.dump(load_progress_logs, file)
+    if file_not_exists:
+        return names_new_rooms_completed, load_progress_logs[-1]['time_progress_taken']
+    else:
+        return names_new_rooms_completed, load_progress_logs[-2]['time_progress_taken']
 
-    return names_new_rooms_completed, load_progress_logs[-2]['time_progress_taken']
 
 
 def list_all_the_completed_rooms(driver):
